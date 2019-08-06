@@ -27,6 +27,7 @@ public class DummyTest {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         waiter = new WebDriverWait(driver, 10);
+
     }
 
     @PerfUI
