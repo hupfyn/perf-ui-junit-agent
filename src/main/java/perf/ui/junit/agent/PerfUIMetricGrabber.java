@@ -1,111 +1,69 @@
 package perf.ui.junit.agent;
 
 import com.automation.remarks.video.RecorderFactory;
-import com.automation.remarks.video.RecordingUtils;
-import com.automation.remarks.video.annotations.Video;
 import com.automation.remarks.video.enums.RecorderType;
 import com.automation.remarks.video.recorder.IVideoRecorder;
-import com.automation.remarks.video.recorder.VideoRecorder;
-import com.google.gson.Gson;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.aeonbits.owner.ConfigFactory;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import perf.ui.junit.agent.annotations.PerfUI;
+import perf.ui.junit.agent.helper.PerfUIHelper;
+import perf.ui.junit.agent.helper.VideoRecorderHelper;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.Objects;
-
-import static com.automation.remarks.video.RecordingUtils.doVideoProcessing;
+import java.util.Date;
 
 public class PerfUIMetricGrabber extends TestWatcher {
 
-    private JavascriptExecutor jsExecutor;
-
-    private static final String PERF_ANNOTATION = "@perf.ui.junit.agent.annotations.PerfUI()";
-    private static final String SCRIPT_TO_EXECUTE = "return " +
-            "{'performance':performance.timing," +
-            "'resource':performance.getEntriesByType('resource')," +
-            "'paint':performance.getEntriesByType('paint')," +
-            "'navigation':performance.getEntriesByType('navigation')}";
-
 
     private boolean isAnotation;
-    private String testName;
     private IVideoRecorder recorder;
+    private PerfUIConfig perfUIConfig;
+    private long startMark;
+    private long endMark;
+    private String encodedVideo;
+    private String performanceMetric;
 
-    private Object getPerformanceMetric() {
-        return jsExecutor.executeScript(SCRIPT_TO_EXECUTE);
+    public PerfUIMetricGrabber() {
+        perfUIConfig = ConfigFactory.create(PerfUIConfig.class);
     }
-
-    private void sendMetrick(String host, String port) {
-        String hostAddress;
-        if (Objects.nonNull(host)){
-            hostAddress = host;
-                    if(Objects.nonNull(port)){
-                        hostAddress += ":"+port;
-                    }
-                    else {
-                        hostAddress += "8585";
-                    }
-        }
-        else {
-            hostAddress = "http://localhost:8585";
-        }
-        hostAddress += "/metric";
-
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-        HttpPost metricSender = new HttpPost(hostAddress);
-        metricSender.setHeader("Content-type", "application/json");
-        try {
-            metricSender.setEntity(new StringEntity(new Gson().toJson(getPerformanceMetric())));
-            HttpResponse httpResponse = client.execute(metricSender);
-            System.out.println(httpResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 
     @Override
     protected void starting(Description description) {
-        super.starting(description);
-        this.recorder = RecorderFactory.getRecorder(RecorderType.FFMPEG);
-        recorder.start();
-        this.isAnotation = checkForAnnotationIsPresent(description.getAnnotations());
-        this.testName = description.getMethodName();
-    }
-
-
-
-
-    public void runAudit(WebDriver driver){
-        if (this.isAnotation){
-            this.jsExecutor = (JavascriptExecutor) driver;
-            File file = recorder.stopAndSave(this.testName);
-            doVideoProcessing(true,file);
-            sendMetrick(null,null);
+        this.isAnotation = PerfUIHelper.checkForAnnotationIsPresent(description);
+        if (this.isAnotation) {
+            this.recorder = RecorderFactory.getRecorder(RecorderType.FFMPEG);
+            startMark = new Date().getTime();
+            recorder.start();
         }
     }
 
-
-
-    private boolean checkForAnnotationIsPresent(Collection<Annotation> list) {
-        boolean isPefUiAnnotation = false;
-        for (Annotation annotation : list) {
-            if (annotation.toString().contains(PERF_ANNOTATION)) {
-                isPefUiAnnotation = true;
-            }
+    @Override
+    protected void succeeded(Description description) {
+        if(this.isAnotation){
+            System.out.println("Test status is ok");
+            this.endMark = new Date().getTime();
+            String recodedVideoPath = VideoRecorderHelper.stopRecording(description,this.recorder,true);
+            this.encodedVideo = PerfUIHelper.encodeVideoToBase64(recodedVideoPath);
+            String dataToSend = PerfUIHelper.prepareData(this.encodedVideo,startMark,endMark,true,this.performanceMetric);
+            PerfUIHelper.sendMetrick(perfUIConfig.protocol(),perfUIConfig.host(),perfUIConfig.port(),dataToSend);
         }
-        return isPefUiAnnotation;
+    }
+
+    @Override
+    protected void failed(Throwable e, Description description) {
+        if(this.isAnotation){
+            System.out.println("Test status is ko");
+            this.endMark = new Date().getTime();
+            String recordedVideoPath = VideoRecorderHelper.stopRecording(description,this.recorder,false);
+            this.encodedVideo = PerfUIHelper.encodeVideoToBase64(recordedVideoPath);
+            String dataToSend = PerfUIHelper.prepareData(this.encodedVideo,startMark,endMark,false,this.performanceMetric);
+            PerfUIHelper.sendMetrick(perfUIConfig.protocol(),perfUIConfig.host(),perfUIConfig.port(),dataToSend);
+        }
+    }
+
+    public void runAudit(WebDriver driver) {
+        if (this.isAnotation) {
+            this.performanceMetric = PerfUIHelper.getPerformanceMetric(driver);
+        }
     }
 }
