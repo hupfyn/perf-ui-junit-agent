@@ -1,10 +1,11 @@
 package perf.ui.junit.agent.helper;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.runner.Description;
@@ -14,10 +15,7 @@ import perf.ui.junit.agent.annotations.PerfUI;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-
-import static java.nio.charset.StandardCharsets.*;
 
 public class PerfUIHelper {
 
@@ -26,14 +24,13 @@ public class PerfUIHelper {
             "'resource':performance.getEntriesByType('resource')," +
             "'paint':performance.getEntriesByType('paint')," +
             "'navigation':performance.getEntriesByType('navigation')," +
-            "'videoString':'decodedPlaceholder'," +
             "'testStatus':'testStatusPlaceholder'," +
             "'startMark':'startMarkPlaceholder'," +
             "'endMark':'endMarkPlaceholder'})";
 
     public static boolean checkForAnnotationIsPresent(Description description) {
         boolean isPefUiAnnotation = false;
-        if(Objects.nonNull(description.getAnnotation(PerfUI.class))){
+        if (Objects.nonNull(description.getAnnotation(PerfUI.class))) {
             isPefUiAnnotation = true;
         }
         return isPefUiAnnotation;
@@ -44,39 +41,29 @@ public class PerfUIHelper {
         return (String) jsExecutor.executeScript(SCRIPT_TO_EXECUTE);
     }
 
-    public static String prepareData(String encodedVideo,long startMark, long endMark, boolean testStatus, String rawMetric){
+    public static String prepareData( long startMark, long endMark, boolean testStatus, String rawMetric) {
         rawMetric = rawMetric.replaceAll("testStatusPlaceholder", String.valueOf(testStatus));
         rawMetric = rawMetric.replaceAll("startMarkPlaceholder", String.valueOf(startMark));
         rawMetric = rawMetric.replaceAll("endMarkPlaceholder", String.valueOf(endMark));
-        rawMetric = rawMetric.replaceAll("decodedPlaceholder", encodedVideo);
         return rawMetric;
     }
 
-    public static void sendMetrick(String protocol, String host, String port, String dataToSend) {
+    public static void sendMetrick(String protocol, String host, String port, String dataToSend, String videoPath) {
+        File file = new File(videoPath);
         String hostAddress = protocol + "://" + host + ":" + port + "/metric";
-        System.out.println(hostAddress);
         CloseableHttpClient client = HttpClientBuilder.create().build();
         HttpPost metricSender = new HttpPost(hostAddress);
-        metricSender.setHeader("Content-type", "application/json");
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addBinaryBody("video",file,ContentType.create("video/mp4"),"video.mp4");
+        builder.addTextBody("data",dataToSend,ContentType.APPLICATION_JSON);
+        HttpEntity entity = builder.build();
+        metricSender.setEntity(entity);
         try {
-            metricSender.setEntity(new StringEntity(dataToSend));
-          HttpResponse httpResponse = client.execute(metricSender);
-          System.out.println(httpResponse);
+            HttpResponse response = client.execute(metricSender);
+            System.out.println(response.getStatusLine());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public static String encodeVideoToBase64(String fileName) {
-        File file = new File(fileName);
-        String encoded = null;
-        try {
-            //Todo: fix encoding video;
-            encoded = java.util.Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return encoded;
-    }
-
 }

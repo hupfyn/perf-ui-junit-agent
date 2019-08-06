@@ -20,7 +20,6 @@ public class PerfUIMetricGrabber extends TestWatcher {
     private PerfUIConfig perfUIConfig;
     private long startMark;
     private long endMark;
-    private String encodedVideo;
     private String performanceMetric;
 
     public PerfUIMetricGrabber() {
@@ -39,25 +38,23 @@ public class PerfUIMetricGrabber extends TestWatcher {
 
     @Override
     protected void succeeded(Description description) {
-        if(this.isAnotation){
+        if (this.isAnotation) {
             System.out.println("Test status is ok");
             this.endMark = new Date().getTime();
-            String recodedVideoPath = VideoRecorderHelper.stopRecording(description,this.recorder,true);
-            this.encodedVideo = PerfUIHelper.encodeVideoToBase64(recodedVideoPath);
-            String dataToSend = PerfUIHelper.prepareData(this.encodedVideo,startMark,endMark,true,this.performanceMetric);
-            PerfUIHelper.sendMetrick(perfUIConfig.protocol(),perfUIConfig.host(),perfUIConfig.port(),dataToSend);
+            String recodedVideoPath = VideoRecorderHelper.stopRecording(description, this.recorder, true);
+            String dataToSend = PerfUIHelper.prepareData(startMark, endMark, true, this.performanceMetric);
+            PerfUIHelper.sendMetrick(perfUIConfig.protocol(), perfUIConfig.host(), perfUIConfig.port(), dataToSend, recodedVideoPath);
         }
     }
 
     @Override
     protected void failed(Throwable e, Description description) {
-        if(this.isAnotation){
+        if (this.isAnotation) {
             System.out.println("Test status is ko");
             this.endMark = new Date().getTime();
-            String recordedVideoPath = VideoRecorderHelper.stopRecording(description,this.recorder,false);
-            this.encodedVideo = PerfUIHelper.encodeVideoToBase64(recordedVideoPath);
-            String dataToSend = PerfUIHelper.prepareData(this.encodedVideo,startMark,endMark,false,this.performanceMetric);
-            PerfUIHelper.sendMetrick(perfUIConfig.protocol(),perfUIConfig.host(),perfUIConfig.port(),dataToSend);
+            String recordedVideoPath = VideoRecorderHelper.stopRecording(description, this.recorder, false);
+            String dataToSend = PerfUIHelper.prepareData(startMark, endMark, false, this.performanceMetric);
+            PerfUIHelper.sendMetrick(perfUIConfig.protocol(), perfUIConfig.host(), perfUIConfig.port(), dataToSend, recordedVideoPath);
         }
     }
 
