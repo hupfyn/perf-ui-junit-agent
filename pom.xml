@@ -34,12 +34,18 @@
             <version>3.6.2</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.automation-remarks</groupId>
             <artifactId>video-recorder-junit</artifactId>
             <version>LATEST</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.aeonbits.owner</groupId>
+            <artifactId>owner</artifactId>
+            <version>1.0.10</version>
+        </dependency>
+
 
     </dependencies>
 
