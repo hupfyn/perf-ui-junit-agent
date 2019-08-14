@@ -93,4 +93,8 @@ public class PerfUIHelper {
             e.printStackTrace();
         }
     }
+
+    public static long getTime(){
+        return new Date().getTime();
+    }
 }
