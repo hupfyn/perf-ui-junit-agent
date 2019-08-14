@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import perf.ui.junit.agent.annotations.PerfUI;
@@ -26,11 +27,12 @@ public class DummyTest {
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+        driver.manage().window().maximize();
         waiter = new WebDriverWait(driver, 10);
 
     }
 
-    @PerfUI
+    @PerfUI(name = "Demo_test")
     @Test
     public void AmazonSearchWithParameters_1() {
         driver.get("https://www.amazon.com/s?k=Fender+Jazz+Bass");
@@ -38,9 +40,17 @@ public class DummyTest {
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
 
+    @PerfUI(name = "Demo_test_failure")
     @Test
     public void AmazonSearchWithParameters_2() {
-        driver.get("https://www.amazon.com/s?k=Fender+Jazz+Bass");
+        driver.get("https://www.amazon.com/s?k=Fender+Jaguar");
+        waiter.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'fail')]")));
+        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'fail')]")));
+    }
+    @PerfUI
+    @Test
+    public void AmazonSearchWithParameters_3() {
+        driver.get("https://www.amazon.com/s?k=Fender+Stratocaster");
         waiter.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
