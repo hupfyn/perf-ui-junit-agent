@@ -8,9 +8,9 @@ pipeline {
     }
     stage('up container') {
       steps {
-        sh 'docker -v'
         sh 'mkdir report'
         sh 'docker run -v /var/jenkins_home/workspace/run_test/reports/:/tmp/reports/ -p 8585:8585 --name perfui-reporter hupfyn/perf-reporter:onwork -d '
+        tool(name: 'Docker', type: 'docker')
       }
     }
   }
