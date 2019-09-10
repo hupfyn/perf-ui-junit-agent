@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import perf.ui.junit.agent.annotations.PerfUI;
@@ -40,12 +39,12 @@ public class DummyTest {
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
 
-    @PerfUI(name = "Demo_test_failure")
+    @PerfUI
     @Test
     public void AmazonSearchWithParameters_2() {
         driver.get("https://www.amazon.com/s?k=Fender+Jaguar");
-        waiter.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'fail')]")));
-        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'fail')]")));
+        waiter.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
+        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
     @PerfUI
     @Test

@@ -8,6 +8,7 @@ import org.junit.runner.Description;
 import static com.automation.remarks.video.RecordingUtils.doVideoProcessing;
 
 import java.io.File;
+import java.util.Objects;
 
 public class VideoRecorderHelper {
 
@@ -16,12 +17,9 @@ public class VideoRecorderHelper {
         return RecordingUtils.getVideoFileName(null,methodName);
     }
 
-    public static String stopRecording(Description description ,IVideoRecorder recorder,boolean testStatus) {
+    public static String stopRecording(Description description, IVideoRecorder recorder) {
         String filename = getFileName(description);
-        File file = null;
-        if (recorder != null) {
-             file = recorder.stopAndSave(filename);
-        }
-        return doVideoProcessing(testStatus,file);
+        File file = Objects.nonNull(recorder)?recorder.stopAndSave(filename):null;
+        return doVideoProcessing(true,file);
     }
 }

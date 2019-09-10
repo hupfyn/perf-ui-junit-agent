@@ -15,10 +15,14 @@ public interface PerfUIConfig extends Config {
     String host();
 
     @Key("perfui.port")
-    @DefaultValue("8585")
+    @DefaultValue("5000")
     String port();
 
     @Key("perfui.protocol")
     @DefaultValue("http")
     String protocol();
+
+    @Key("result.folder")
+    @DefaultValue("PerfUiResult")
+    String folder();
 }
