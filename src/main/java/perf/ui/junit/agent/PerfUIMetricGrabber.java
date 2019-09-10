@@ -7,6 +7,7 @@ import org.aeonbits.owner.ConfigFactory;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.WebDriver;
+import perf.ui.junit.agent.config.PerfUIConfig;
 import perf.ui.junit.agent.helper.PerfUIHelper;
 import perf.ui.junit.agent.http.PerfUIMetricSender;
 import perf.ui.junit.agent.helper.VideoRecorderHelper;

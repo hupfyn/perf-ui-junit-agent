@@ -1,8 +1,6 @@
 package perf.ui.junit.agent.http;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -10,7 +8,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.runner.Description;
-import perf.ui.junit.agent.PerfUIConfig;
+import perf.ui.junit.agent.config.PerfUIConfig;
 import perf.ui.junit.agent.helper.PerfUIHelper;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package perf.ui.junit.agent;
+package perf.ui.junit.agent.config;
 
 
 import org.aeonbits.owner.Config;
