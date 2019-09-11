@@ -20,7 +20,7 @@ public class PerfUIHelper {
 
     public static String getAuditResult(WebDriver driver,long startTime) {
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-        return (String) jsExecutor.executeScript(String.format("var testStartTime=%d; return %s", startTime, getScript()));
+        return (String) jsExecutor.executeScript(String.format("var testStartTimestamp=%d; return %s", startTime, getScript()));
     }
 
     private static String getScript(){

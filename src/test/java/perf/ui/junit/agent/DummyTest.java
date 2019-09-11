@@ -1,10 +1,7 @@
 package perf.ui.junit.agent;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,14 +13,14 @@ import java.util.Objects;
 
 public class DummyTest {
 
-    private WebDriver driver;
-    private WebDriverWait waiter;
+    private static WebDriver driver;
+    private static WebDriverWait waiter;
 
     @Rule
     public PerfUIMetricGrabber perfUIMetricGrabber = new PerfUIMetricGrabber();
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().window().maximize();
@@ -55,8 +52,13 @@ public class DummyTest {
     }
 
     @After
-    public void shutDown() {
+    public void audit() {
         perfUIMetricGrabber.runAudit(driver);
+
+    }
+
+    @AfterClass
+    public static void shutDown(){
         if (!Objects.isNull(driver)) {
             driver.quit();
         }

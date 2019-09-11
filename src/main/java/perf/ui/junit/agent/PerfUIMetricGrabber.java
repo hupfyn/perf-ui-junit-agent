@@ -31,8 +31,6 @@ public class PerfUIMetricGrabber extends TestWatcher {
         if (this.isAnnotation) {
             startMark = PerfUIHelper.getTime();
             recorder.start();
-            long mark1 = PerfUIHelper.getTime();
-            System.out.println("start record: "+ (mark1 -startMark));
         }
     }
 
@@ -52,21 +50,12 @@ public class PerfUIMetricGrabber extends TestWatcher {
 
     public void runAudit(WebDriver driver) {
         if (this.isAnnotation) {
-            long t1 = PerfUIHelper.getTime();
             this.auditResult = PerfUIHelper.getAuditResult(driver,this.startMark);
-            long t2 = PerfUIHelper.getTime();
-            System.out.println("get metric: "+(t2-t1));
         }
     }
 
     private void reportResult(Description description){
-        long m1 = PerfUIHelper.getTime();
         String recodedVideoPath = VideoRecorderHelper.stopRecording(description, this.recorder);
-        long m2 = PerfUIHelper.getTime();
-        System.out.println("stop record result: "+ (m2-m1));
-        m1 = PerfUIHelper.getTime();
         metricSender.sendMetric(auditResult,recodedVideoPath,description);
-        m2 = PerfUIHelper.getTime();
-        System.out.println("report result: "+ (m2-m1));
     }
 }

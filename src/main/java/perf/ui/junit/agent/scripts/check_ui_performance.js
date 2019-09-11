@@ -665,7 +665,7 @@ function checkInfo() {
 			measures: marks.length
 	    },
         windowSize: windowSize(),
-        testStart: Math.round(timing.navigationStart - testStartTime)
+        testStartTimestamp: testStartTimestamp
 	}
 }
 
