@@ -9,8 +9,8 @@ import org.junit.runner.Description;
 import org.openqa.selenium.WebDriver;
 import perf.ui.junit.agent.config.PerfUIConfig;
 import perf.ui.junit.agent.helper.PerfUIHelper;
-import perf.ui.junit.agent.http.PerfUIMetricSender;
 import perf.ui.junit.agent.helper.VideoRecorderHelper;
+import perf.ui.junit.agent.http.PerfUIMetricSender;
 
 public class PerfUIMetricGrabber extends TestWatcher {
 

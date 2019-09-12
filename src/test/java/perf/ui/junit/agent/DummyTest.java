@@ -19,11 +19,13 @@ public class DummyTest {
     @Rule
     public PerfUIMetricGrabber perfUIMetricGrabber = new PerfUIMetricGrabber();
 
+
     @BeforeClass
     public static void setUp() {
+        System.getenv();
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        driver.manage().window().maximize();
+        driver.manage().window().fullscreen();
         waiter = new WebDriverWait(driver, 10);
 
     }
@@ -54,7 +56,6 @@ public class DummyTest {
     @After
     public void audit() {
         perfUIMetricGrabber.runAudit(driver);
-
     }
 
     @AfterClass
@@ -63,5 +64,4 @@ public class DummyTest {
             driver.quit();
         }
     }
-
 }
