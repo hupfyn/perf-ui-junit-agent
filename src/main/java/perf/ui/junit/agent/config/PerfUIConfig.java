@@ -7,22 +7,26 @@ import org.aeonbits.owner.Config.LoadPolicy;
 
 
 @LoadPolicy(Config.LoadType.FIRST)
-@Sources({ "classpath:perfui.properties"})
+@Sources({"classpath:perfui.properties"})
 public interface PerfUIConfig extends Config {
 
     @Key("perfui.host")
-    @DefaultValue("localhost")
-    String host();
+    default String host(){
+        return System.getProperty("perfui.host","localhost");
+    }
 
     @Key("perfui.port")
-    @DefaultValue("5000")
-    String port();
+    default String port(){
+        return System.getProperty("perfui.port","5000");
+    }
 
     @Key("perfui.protocol")
-    @DefaultValue("http")
-    String protocol();
+    default String protocol(){
+        return System.getProperty("perfui.protocol","http");
+    }
 
     @Key("result.folder")
-    @DefaultValue("PerfUiResult")
-    String folder();
+    default String folder(){
+        return System.getProperty("result.folder","PerfUiResult");
+    }
 }
