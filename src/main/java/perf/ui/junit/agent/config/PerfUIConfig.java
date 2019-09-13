@@ -11,22 +11,18 @@ import org.aeonbits.owner.Config.LoadPolicy;
 public interface PerfUIConfig extends Config {
 
     @Key("perfui.host")
-    default String host(){
-        return System.getProperty("perfui.host","localhost");
-    }
+    @DefaultValue("localhost")
+    String host();
 
     @Key("perfui.port")
-    default String port(){
-        return System.getProperty("perfui.port","5000");
-    }
+    @DefaultValue("5000")
+    String port();
 
     @Key("perfui.protocol")
-    default String protocol(){
-        return System.getProperty("perfui.protocol","http");
-    }
+    @DefaultValue("http")
+    String protocol();
 
     @Key("result.folder")
-    default String folder(){
-        return System.getProperty("result.folder","PerfUiResult");
-    }
+    @DefaultValue("PerfUiResult")
+    String folder();
 }
