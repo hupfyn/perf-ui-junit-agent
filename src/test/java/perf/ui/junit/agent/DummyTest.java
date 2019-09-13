@@ -19,15 +19,12 @@ public class DummyTest {
     @Rule
     public PerfUIMetricGrabber perfUIMetricGrabber = new PerfUIMetricGrabber();
 
-
     @BeforeClass
     public static void setUp() {
-        System.getenv();
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().window().fullscreen();
         waiter = new WebDriverWait(driver, 10);
-
     }
 
     @PerfUI(name = "Demo_test")
