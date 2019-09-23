@@ -23,7 +23,7 @@ public class DummyTest {
     public static void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        driver.manage().window().fullscreen();
+        driver.manage().window().maximize();
         waiter = new WebDriverWait(driver, 10);
     }
 
