@@ -6,6 +6,7 @@ import org.junit.runner.Description;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import perf.ui.junit.agent.annotations.PerfUI;
+import perf.ui.junit.agent.config.PerfUIConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,14 @@ public class PerfUIHelper {
             FileUtils.copyInputStreamToFile(response.getEntity().getContent(),new File(getReportName(description,folder)));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void setConfigValueForRecorder(PerfUIConfig config){
+        System.setProperty("video.save.mode","ALL");
+        System.setProperty("video.frame.rate",config.frameRate());
+        if(Objects.nonNull(config.videoDisplay())){
+            System.setProperty("ffmpeg.display",config.videoDisplay());
         }
     }
 }

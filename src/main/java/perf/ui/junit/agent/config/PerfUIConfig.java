@@ -10,19 +10,18 @@ import org.aeonbits.owner.Config.LoadPolicy;
 @Sources({"classpath:perfui.properties"})
 public interface PerfUIConfig extends Config {
 
-    @Key("perfui.host")
-    @DefaultValue("localhost")
-    String host();
-
-    @Key("perfui.port")
-    @DefaultValue("5000")
-    String port();
-
-    @Key("perfui.protocol")
-    @DefaultValue("http")
-    String protocol();
+    @Key("perfui.webhook")
+    @DefaultValue("http://localhost:5000/perfui/analyze")
+    String webHook();
 
     @Key("result.folder")
     @DefaultValue("PerfUiResult")
     String folder();
+
+    @Key("video.framerate")
+    @DefaultValue("1")
+    String frameRate();
+
+    @Key("video.display")
+    String videoDisplay();
 }
