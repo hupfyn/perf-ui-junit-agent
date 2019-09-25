@@ -19,9 +19,13 @@ public class PerfUIMetricGrabber extends TestWatcher {
     private PerfUIMetricSender metricSender;
     private long startMark;
     private String auditResult;
+    private int loadTimeOut;
+    private WebDriver driver;
 
     public PerfUIMetricGrabber() {
-        metricSender = new PerfUIMetricSender(ConfigFactory.create(PerfUIConfig.class));
+        PerfUIConfig perfUIConfig = ConfigFactory.create(PerfUIConfig.class);
+        this.metricSender = new PerfUIMetricSender(perfUIConfig);
+        this.loadTimeOut = perfUIConfig.loadTimeOut();
         this.recorder = RecorderFactory.getRecorder(RecorderType.FFMPEG);
     }
 
@@ -37,6 +41,7 @@ public class PerfUIMetricGrabber extends TestWatcher {
     @Override
     protected void succeeded(Description description) {
         if (this.isAnnotation) {
+            this.auditResult = PerfUIHelper.getAuditResult(this.driver,this.startMark,this.loadTimeOut);
             reportResult(description);
         }
     }
@@ -44,14 +49,13 @@ public class PerfUIMetricGrabber extends TestWatcher {
     @Override
     protected void failed(Throwable e, Description description) {
         if (this.isAnnotation) {
+            this.auditResult = PerfUIHelper.getAuditResult(this.driver,this.startMark,this.loadTimeOut);
             reportResult(description);
         }
     }
 
-    public void runAudit(WebDriver driver) {
-        if (this.isAnnotation) {
-            this.auditResult = PerfUIHelper.getAuditResult(driver,this.startMark);
-        }
+    public void getPageState(WebDriver driver) {
+        this.driver = driver;
     }
 
     private void reportResult(Description description){

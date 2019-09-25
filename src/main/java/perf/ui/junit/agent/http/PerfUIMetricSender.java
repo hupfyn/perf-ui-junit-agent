@@ -1,5 +1,6 @@
 package perf.ui.junit.agent.http;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -10,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.runner.Description;
 import perf.ui.junit.agent.config.PerfUIConfig;
 import perf.ui.junit.agent.helper.PerfUIHelper;
+import perf.ui.junit.agent.helper.VideoRecorderHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class PerfUIMetricSender {
 
     public PerfUIMetricSender(PerfUIConfig config) {
         this.config = config;
-        PerfUIHelper.setConfigValueForRecorder(config);
+        VideoRecorderHelper.setConfigValueForRecorder(config);
     }
 
     public void sendMetric(String dataToSend, String filePath, Description description) {
@@ -29,6 +31,7 @@ public class PerfUIMetricSender {
         httpPost.setEntity(generateRequestBody(dataToSend,new File(filePath)));
         try {
             PerfUIHelper.writeHtmlToFile(client.execute(httpPost),description,config.folder());
+            FileUtils.writeStringToFile(new File("PerfUiDebug/send_data_"+PerfUIHelper.getTime()+".json"),dataToSend,"utf-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

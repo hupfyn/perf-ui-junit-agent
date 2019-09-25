@@ -27,7 +27,7 @@ public class DummyTest {
         waiter = new WebDriverWait(driver, 10);
     }
 
-    @PerfUI(name = "Demo_test")
+    @PerfUI(name = "Demo_test_1")
     @Test
     public void AmazonSearchWithParameters_1() {
         driver.get("https://www.amazon.com/s?k=Fender+Jazz+Bass");
@@ -35,14 +35,14 @@ public class DummyTest {
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
 
-    @PerfUI
+    @PerfUI(name = "Demo_test_2")
     @Test
     public void AmazonSearchWithParameters_2() {
         driver.get("https://www.amazon.com/s?k=Fender+Jaguar");
         waiter.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
-    @PerfUI
+    @PerfUI(name = "Demo_test_3")
     @Test
     public void AmazonSearchWithParameters_3() {
         driver.get("https://www.amazon.com/s?k=Fender+Stratocaster");
@@ -52,7 +52,7 @@ public class DummyTest {
 
     @After
     public void audit() {
-        perfUIMetricGrabber.runAudit(driver);
+        perfUIMetricGrabber.getPageState(driver);
     }
 
     @AfterClass

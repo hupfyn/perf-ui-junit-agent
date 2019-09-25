@@ -24,4 +24,8 @@ public interface PerfUIConfig extends Config {
 
     @Key("video.display")
     String videoDisplay();
+
+    @Key("perfui.loadtimeout")
+    @DefaultValue("1")
+    int loadTimeOut();
 }

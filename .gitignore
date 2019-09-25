@@ -13,8 +13,9 @@
 *.iml
 
 target
-video
+PerfUiDebug/
 PerfUiResult/
+PerfUiVideo/
 .idea/
 
 # Package Files #

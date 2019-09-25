@@ -6,6 +6,8 @@ import org.junit.runner.Description;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import perf.ui.junit.agent.annotations.PerfUI;
 import perf.ui.junit.agent.config.PerfUIConfig;
 
@@ -16,36 +18,31 @@ import java.util.Objects;
 
 public class PerfUIHelper {
 
+    private static File auditScriptFile = new File("src/main/java/perf/ui/junit/agent/scripts/check_ui_performance.js");
+    private static File polyFillFile = new File("src/main/java/perf/ui/junit/agent/scripts/polyfill_ie11.js");
+    private static File isPageLoadScript = new File("src/main/java/perf/ui/junit/agent/scripts/page_really_loaded.js");
+
     public static boolean checkForAnnotationIsPresent(Description description) {
         return Objects.nonNull(description.getAnnotation(PerfUI.class));
     }
 
-    public static String getAuditResult(WebDriver driver, long startTime) {
+    public static String getAuditResult(WebDriver driver, long startTime, int loadTimeOut) {
+        checkIsPageReallyLoaded(driver,loadTimeOut);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
         if (driver instanceof InternetExplorerDriver) {
-            jsExecutor.executeScript(getPolyfill());
+            jsExecutor.executeScript(getScriptCode(polyFillFile));
         }
-        return (String) jsExecutor.executeScript(String.format("var testStartTimestamp=%d; return %s", startTime, getScript()));
+        return (String) jsExecutor.executeScript(String.format("var testStartTimestamp=%d; return %s", startTime, getScriptCode(auditScriptFile)));
     }
 
-    private static String getScript() {
+    private static String getScriptCode(File file) {
         String script = "";
         try {
-            script = FileUtils.readFileToString(new File("src/main/java/perf/ui/junit/agent/scripts/check_ui_performance.js"), "utf-8");
+            script = FileUtils.readFileToString(file, "utf-8");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return script;
-    }
-
-    private static String getPolyfill() {
-        String polyfill = "";
-        try {
-            polyfill = FileUtils.readFileToString(new File("src/main/java/perf/ui/junit/agent/scripts/polyfill_ie11.js"), "utf-8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return polyfill;
     }
 
     public static long getTime() {
@@ -54,7 +51,7 @@ public class PerfUIHelper {
 
     private static String getReportName(Description description, String folder) {
         String fileName = description.getAnnotation(PerfUI.class).name().length() != 0 ? description.getAnnotation(PerfUI.class).name() : description.getMethodName();
-        fileName = folder + "/" + fileName + "_" + getTime() + ".html";
+        fileName = String.format("%s/%s_%d.html", folder, fileName, getTime());
         return fileName;
     }
 
@@ -66,11 +63,10 @@ public class PerfUIHelper {
         }
     }
 
-    public static void setConfigValueForRecorder(PerfUIConfig config) {
-        System.setProperty("video.save.mode", "ALL");
-        System.setProperty("video.frame.rate", config.frameRate());
-        if (Objects.nonNull(config.videoDisplay())) {
-            System.setProperty("ffmpeg.display", config.videoDisplay());
-        }
+    private static void checkIsPageReallyLoaded(WebDriver driver, int timeOut){
+        Wait<WebDriver> wait = new WebDriverWait(driver, timeOut);
+        wait.until(webDriver -> String
+                .valueOf(((JavascriptExecutor) webDriver).executeScript("return "+getScriptCode(isPageLoadScript)))
+                .equals("true"));
     }
 }

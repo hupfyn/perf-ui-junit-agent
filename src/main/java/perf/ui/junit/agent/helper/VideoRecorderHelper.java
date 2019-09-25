@@ -3,6 +3,7 @@ package perf.ui.junit.agent.helper;
 import com.automation.remarks.video.RecordingUtils;
 import com.automation.remarks.video.recorder.IVideoRecorder;
 import org.junit.runner.Description;
+import perf.ui.junit.agent.config.PerfUIConfig;
 
 
 import static com.automation.remarks.video.RecordingUtils.doVideoProcessing;
@@ -21,5 +22,14 @@ public class VideoRecorderHelper {
         String filename = getFileName(description);
         File file = Objects.nonNull(recorder)?recorder.stopAndSave(filename):null;
         return doVideoProcessing(true,file);
+    }
+
+    public static void setConfigValueForRecorder(PerfUIConfig config) {
+        System.setProperty("video.folder","PerfUiVideo");
+        System.setProperty("video.save.mode", "ALL");
+        System.setProperty("video.frame.rate", config.frameRate());
+        if (Objects.nonNull(config.videoDisplay())) {
+            System.setProperty("ffmpeg.display", config.videoDisplay());
+        }
     }
 }
