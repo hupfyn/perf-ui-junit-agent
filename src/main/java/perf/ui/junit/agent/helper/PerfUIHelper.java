@@ -9,7 +9,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import perf.ui.junit.agent.annotations.PerfUI;
-import perf.ui.junit.agent.config.PerfUIConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +34,13 @@ public class PerfUIHelper {
         return (String) jsExecutor.executeScript(String.format("var testStartTimestamp=%d; return %s", startTime, getScriptCode(auditScriptFile)));
     }
 
+    private static void checkIsPageReallyLoaded(WebDriver driver, int timeOut){
+        Wait<WebDriver> wait = new WebDriverWait(driver, timeOut);
+        wait.until(webDriver -> String
+                .valueOf(((JavascriptExecutor) webDriver).executeScript(String.format("return %s", getScriptCode(isPageLoadScript))))
+                .equals("true"));
+    }
+
     private static String getScriptCode(File file) {
         String script = "";
         try {
@@ -55,18 +61,12 @@ public class PerfUIHelper {
         return fileName;
     }
 
+
     public static void writeHtmlToFile(HttpResponse response, Description description, String folder) {
         try {
             FileUtils.copyInputStreamToFile(response.getEntity().getContent(), new File(getReportName(description, folder)));
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static void checkIsPageReallyLoaded(WebDriver driver, int timeOut){
-        Wait<WebDriver> wait = new WebDriverWait(driver, timeOut);
-        wait.until(webDriver -> String
-                .valueOf(((JavascriptExecutor) webDriver).executeScript("return "+getScriptCode(isPageLoadScript)))
-                .equals("true"));
     }
 }

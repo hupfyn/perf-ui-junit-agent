@@ -27,6 +27,13 @@ public class DummyTest {
         waiter = new WebDriverWait(driver, 10);
     }
 
+    @PerfUI
+    @Test
+    public void Yahoo() {
+        driver.get("https://www.yahoo.com/");
+    }
+
+
     @PerfUI(name = "Demo_test_1")
     @Test
     public void AmazonSearchWithParameters_1() {
@@ -57,7 +64,7 @@ public class DummyTest {
 
     @AfterClass
     public static void shutDown(){
-        if (!Objects.isNull(driver)) {
+        if (Objects.nonNull(driver)) {
             driver.quit();
         }
     }
