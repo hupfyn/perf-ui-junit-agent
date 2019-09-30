@@ -49,6 +49,7 @@ public class DummyTest {
         waiter.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'results')]")));
     }
+
     @PerfUI(name = "Demo_test_3")
     @Test
     public void AmazonSearchWithParameters_3() {

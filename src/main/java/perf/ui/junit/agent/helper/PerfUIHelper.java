@@ -69,4 +69,12 @@ public class PerfUIHelper {
             e.printStackTrace();
         }
     }
+
+    public static void syncTimeout(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

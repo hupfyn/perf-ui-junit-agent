@@ -30,8 +30,8 @@ public class PerfUIMetricSender {
         HttpPost httpPost = new HttpPost(getHostAddress());
         httpPost.setEntity(generateRequestBody(dataToSend,new File(filePath)));
         try {
+            FileUtils.writeStringToFile(new File(String.format("PerfUiDebug/send_data_%d.json", PerfUIHelper.getTime())),dataToSend,"utf-8");
             PerfUIHelper.writeHtmlToFile(client.execute(httpPost),description,config.folder());
-            FileUtils.writeStringToFile(new File("PerfUiDebug/send_data_"+PerfUIHelper.getTime()+".json"),dataToSend,"utf-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

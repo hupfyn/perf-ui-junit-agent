@@ -20,6 +20,7 @@ public class VideoRecorderHelper {
 
     public static String stopRecording(Description description, IVideoRecorder recorder) {
         String filename = getFileName(description);
+        PerfUIHelper.syncTimeout(100);
         File file = Objects.nonNull(recorder)?recorder.stopAndSave(filename):null;
         return doVideoProcessing(true,file);
     }
